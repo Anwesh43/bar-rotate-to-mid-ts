@@ -204,3 +204,25 @@ class BarRotateToMid {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    brtm : BarRotateToMid = new BarRotateToMid()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.brtm.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.brtm.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.brtm.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
