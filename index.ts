@@ -15,3 +15,52 @@ const colors : Array<string> = [
     "#2962FF"
 ]
 const backColor : string = "#bdbdbd"
+
+class ScaleUtil {
+
+    static maxScale(scale : number, i : number, n : number) : number {
+        return Math.max(0, scale -  i / n)
+    }
+
+    static divideScale(scale : number, i : number, n : number) : number {
+        return Math.min(1 / n, ScaleUtil.maxScale(scale, i, n)) * n 
+    }
+
+    static sinify(scale : number) : number {
+        return Math.sin(scale * Math.PI)
+    }
+}
+
+class DrawingUtil {
+
+    static drawEitherSideBar(context : CanvasRenderingContext2D, scale : number, gap : number, size : number) {
+        for (var j = 0; j < 2; j++) {
+            const barH : number = gap * ScaleUtil.divideScale(scale, 0, parts)
+            context.save()
+            context.scale(1, 1 - 2 * j)
+            context.rotate(ScaleUtil.divideScale(scale, 2, parts))
+            context.translate(0, (h / 2 - gap / 2) * (1 - ScaleUtil.divideScale(scale, 1, parts)))
+            context.fillRect(-size / 2, gap - barH, size / 2, barH) 
+            context.restore()
+        }
+    }
+
+    static drawBarRotateToMid(context : CanvasRenderingContext2D, scale : number) {
+        const gap : number = w / bars 
+        const barW : number = Math.min(w, h) / barWFactor 
+        const sf : number = ScaleUtil.sinify(scale)
+        context.save()
+        for (var j = 0; j < bars; j++) {
+            context.save()
+            context.translate(gap * j + gap / 2, h / 2)
+            DrawingUtil.drawEitherSideBar(context, sf, gap, barW)
+            context.restore()
+        }
+        context.restore()
+    }
+
+    static drawBRTMNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        context.fillStyle = colors[i]
+        DrawingUtil.drawBarRotateToMid(context, scale)
+    }
+}
